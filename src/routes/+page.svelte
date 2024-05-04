@@ -15,7 +15,7 @@
   
 </script>
 
-<h1>Welcome to SvelteKit</h1>
+<h1 class="text-8xl">Welcome to dis</h1>
 <button on:click={btn}>Click me</button>
 
 {msg}
