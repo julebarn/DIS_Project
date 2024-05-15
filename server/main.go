@@ -5,7 +5,6 @@ import (
 	"net/http"
 )
 
-
 func main() {
 	fmt.Println("Server started and listening on PORT 8080...")
 
