@@ -1,5 +1,21 @@
 # DIS_Project
 
+# Compiling and Running through Docker
+
+If you want to locally host the server and website through Docker, 
+you can do so by simply running
+
+```bash
+docker-compose up 
+```
+
+If you change any settings in one of the ``*.Dockerfile`` files, you may first
+see the changes reflected in your containers when running
+
+```bash
+docker-compose up --build
+```
+
 # create-svelte
 
 Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
