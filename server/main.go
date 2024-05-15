@@ -7,6 +7,7 @@ import (
 
 
 func main() {
+	fmt.Println("Server started and listening on PORT 8080...")
 
 	http.Handle("/", http.FileServer(http.Dir("./build")))
 	http.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
@@ -15,4 +16,6 @@ func main() {
 	})
 
 	http.ListenAndServe(":8080", nil)
+
+	fmt.Println("Server stopped...")
 }
