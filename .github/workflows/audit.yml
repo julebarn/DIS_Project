@@ -24,7 +24,9 @@ jobs:
     - name: Verify dependencies
       run: go mod verify
     
-    - uses: sqlc-dev/setup-sqlc@v4
+      
+    - name: Setup sqlc
+      uses: sqlc-dev/setup-sqlc@v4
       with:
         sqlc-version: v1.26.0
 
