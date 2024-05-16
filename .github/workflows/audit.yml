@@ -24,8 +24,9 @@ jobs:
     - name: Verify dependencies
       run: go mod verify
     
-    - name: Install sqlc
-      run: go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+    - uses: sqlc-dev/setup-sqlc@v4
+      with:
+        sqlc-version: v1.26.0
 
     - name: Go Generate
       run: go generate ./... && git diff --exit-code
