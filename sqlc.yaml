@@ -5,8 +5,8 @@ sql:
     schema: "schema.sql"
     gen:
       go:
-        package: "TODO"
-        out: "TODO"
+        package: "db"
+        out: "server/db"
         sql_package: "pgx/v5"
 overrides:
     go: null
