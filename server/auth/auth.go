@@ -16,11 +16,11 @@ import (
 var secretKey = []byte("secret-key")
 
 type key int
+
 const UserIDKey key = 0
 
-
 // Middleware checks if the user is authenticated
-// if the user is authenticated the user id is added to the (request) context 
+// if the user is authenticated the user id is added to the (request) context
 // uder the key UserIDKey
 func Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +33,7 @@ func Middleware(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(r.Context(), UserIDKey, userID)
 		r = r.WithContext(ctx)
-		
+
 		next.ServeHTTP(w, r)
 
 	})
@@ -107,14 +107,14 @@ func EndpointsHandler() http.Handler {
 				return
 			}
 			http.SetCookie(w, cookie)
-			
+
 		} else if strings.HasSuffix(r.URL.Path, "/logout") {
-			
+
 			// for reference you can logout with out being logged in 😂
-			
+
 			http.SetCookie(w, &http.Cookie{
 				Name:   "token",
-				Value: "",
+				Value:  "",
 				MaxAge: -1,
 				Path:   "/",
 			})
@@ -167,7 +167,6 @@ func tokenCookie(userID int32) (*http.Cookie, error) {
 	}
 	return cookie, nil
 }
-
 
 func isAuth(r *http.Request) (isAuth bool, userid int32) {
 	cookie, err := r.Cookie("token")
