@@ -4,4 +4,7 @@ SELECT * FROM users WHERE username = $1;
 
 
 -- name: CreateUser :one
-INSERT INTO users (username, passwordHash) VALUES ($1, $2) RETURNING *;
+WITH userid AS (
+  INSERT INTO users (username, passwordHash) VALUES ($1, $2) RETURNING id
+)
+SELECT * FROM users WHERE id = (SELECT * FROM userid);
