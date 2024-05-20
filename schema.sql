@@ -1,6 +1,6 @@
 
-CREATE TABLE authors (
-  id   BIGSERIAL PRIMARY KEY,
-  name text      NOT NULL,
-  bio  text
+CREATE TABLE users (
+  id SERIAL NOT NULL PRIMARY KEY,
+  username VARCHAR(64) NOT NULL,
+  passwordHash CHAR(60) NOT NULL
 );
