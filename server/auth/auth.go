@@ -105,7 +105,7 @@ func EndpointsHandler() http.Handler {
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
-		
+
 			cookie, err := tokenCookie(user.ID)
 			if err != nil {
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
