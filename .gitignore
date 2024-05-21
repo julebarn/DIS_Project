@@ -32,3 +32,6 @@ node_modules
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
+server/db/db.go
+server/db/models.go
+server/db/query.sql.go
