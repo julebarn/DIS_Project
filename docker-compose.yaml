@@ -4,17 +4,6 @@ services:
   server:
     build:
       context: .
-      dockerfile: server.Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
-
-  website:
-    build:
-      context: .
-      dockerfile: website.Dockerfile
-    ports:
-      - "5000:5000"
-    environment:
-      - API_PROXY=http://server:8080
-      - PORT=5000
-      - HOST=0.0.0.0
