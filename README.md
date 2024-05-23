@@ -9,12 +9,13 @@ you can do so by simply running
 docker-compose up 
 ```
 
-If you change any settings in one of the ``*.Dockerfile`` files, you may first
-see the changes reflected in your containers when running
+If you change any settings, you may first see the changes reflected in your container when running
 
 ```bash
 docker-compose up --build
 ```
+
+When the container is running, you can access the website at ``http://localhost:8080/``.
 
 # create-svelte
 
