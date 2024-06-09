@@ -47,8 +47,8 @@ The schema can be found in ``schema.sql``. The queries can be found in ``query.s
 # Sample Dataset 
 The sample dataset can be found in ``init-data.sql``. The sample dataset should be automatically inserted when running the application. 
 The sample dataset contains two users;
-- User1: Username = "Test1" Password = "Test1234%"
-- User2: Username = "Test2" Password = "Test1234%"
+- User1: Username = "test1" Password = "Test1234%"
+- User2: Username = "test2" Password = "Test1234%"
   
 With 5 events and 2 clubs. 
 
