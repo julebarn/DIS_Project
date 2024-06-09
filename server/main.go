@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -17,15 +16,6 @@ import (
 func main() {
 	fmt.Println("Server started and listening on PORT 8080...")
 
-	// print all files in the build folder
-	files, err := ioutil.ReadDir("./build")
-	if err != nil {
-		panic(err)
-	}
-
-	for _, f := range files {
-		fmt.Println(f.Name())
-	}
 
 	handler := http.NewServeMux()
 	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

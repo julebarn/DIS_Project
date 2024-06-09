@@ -92,7 +92,7 @@
                 <div
                     class="bg-slate-500 p-2 m-2 rounded-lg text-xl w-text text-center"
                 >
-                    <a href="/club/+page?id={value.club_id}">Go to club</a>
+                    <a href="/club?id={value.club_id}">Go to club</a>
                 </div>
             {/if}
 
