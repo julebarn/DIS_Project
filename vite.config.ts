@@ -4,8 +4,10 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [sveltekit()],
 	server: {
+		host: process.env.HOST || 'localhost',
+		port: parseInt(process.env.PORT),
 		proxy: {
-			'/api': 'http://localhost:8080',
-		}
+			'/api': process.env.API_PROXY || 'http://localhost:8080'
+		},
 	}
 });

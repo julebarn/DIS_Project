@@ -13,6 +13,7 @@ import (
 )
 
 func main() {
+	fmt.Println("Server started and listening on PORT 8080...")
 
 	handler := http.NewServeMux()
 	handler.Handle("/", http.FileServer(http.Dir("./build")))
@@ -155,6 +156,7 @@ func main() {
 
 		json.NewEncoder(w).Encode(res)
 	})
+
 
 	handler.HandleFunc("/api/user/list", func(w http.ResponseWriter, r *http.Request) {
 		user, err := db.New(db.Conn(r.Context())).GetAllUsers(r.Context())
@@ -370,4 +372,5 @@ func (h *handerloger) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.handler.ServeHTTP(w, r)
+
 }
