@@ -38,14 +38,19 @@ docker image rm dis_project-server
 # Regexes
 Regexes used can be found in ``src/routes/register/+page.svelte``.
 
-# Sample Database 
+# Database
+The schema can be found in ``schema.sql``. The queries can be found in ``query.sql``. 
+
+# E/R-diagram
+![Screenshot 2024-06-09 225430](https://github.com/julebarn/DIS_Project/assets/43752641/daed0522-4492-4dde-9182-3418749280c9)
+
+# Sample Dataset 
 The sample dataset can be found in ``init-data.sql``. The sample dataset should be automatically inserted when running the application. 
 The sample dataset contains two users;
 - User1: Username = "Test1" Password = "Test1234%"
 - User2: Username = "Test2" Password = "Test1234%"
   
 With 5 events and 2 clubs. 
-
 
 # Known Issues
 - Sometimes when creating a new event, the event is not shown at the front-end, but we do believe that it is inserted into the database. This may be caused by the front-end only showing future events.
