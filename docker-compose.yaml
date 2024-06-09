@@ -7,3 +7,16 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./init-data.sql:/docker-entrypoint-initdb.d/init-data.sql
+    ports:
+      - "5432:5432"
+
+volumes:
+  db-data:

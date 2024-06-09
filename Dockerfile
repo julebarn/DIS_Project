@@ -13,6 +13,7 @@ COPY package-lock.json ./
 COPY src ./src
 COPY static ./static
 
+
 # Config files
 COPY postcss.config.js ./
 COPY svelte.config.js ./
@@ -47,7 +48,7 @@ RUN sqlc generate
 FROM golang:alpine AS server-builder
 WORKDIR /src
 
-COPY server .
+COPY server ./server
 COPY go.mod .
 COPY go.sum .
 COPY --from=sqlc-build /src/server/db/ /server/db/
@@ -58,16 +59,17 @@ ENV GOOS=linux
 # not 100% sure if this is necessary
 RUN go mod download
 
-RUN go build -o ./server ./main.go
-
+RUN go build -o ./server ./server/main.go
 
 ###############################
 #######       run       #######
 ###############################
-FROM scratch
+FROM alpine:latest
 EXPOSE 8080
 
 COPY --from=frontend-build /src/build /build
 COPY --from=server-builder /src/server /bin/server
+
+RUN chmod +x /bin/server
 
 CMD ["/bin/server"]
