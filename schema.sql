@@ -1,14 +1,14 @@
 
 CREATE TABLE users (
   id SERIAL NOT NULL PRIMARY KEY,
-  username VARCHAR(64) NOT NULL,
+  username VARCHAR(64) NOT NULL UNIQUE,
   passwordHash CHAR(60) NOT NULL
 );
 
 
 CREATE TABLE clubs (
   id SERIAL NOT NULL PRIMARY KEY,
-  name VARCHAR(64) NOT NULL,
+  name VARCHAR(64) NOT NULL UNIQUE,
   description TEXT NOT NULL
 );
 

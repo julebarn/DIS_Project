@@ -3,8 +3,10 @@ package auth
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
-	"strings"
+	"strconv"
+
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -49,101 +51,126 @@ type registerRequest struct {
 	Password string `json:"password"`
 }
 
-func EndpointsHandler() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
 
-		if strings.HasSuffix(r.URL.Path, "/login") {
-			var req loginRequest
-			err := json.NewDecoder(r.Body).Decode(&req)
-			if err != nil {
-				http.Error(w, "Bad request", http.StatusBadRequest)
-				return
-			}
 
-			user, err := db.New(db.Conn()).GetUser(ctx, req.Username)
-			if err != nil {
-				http.Error(w, "User not found", http.StatusNotFound)
-				return
-			}
+func EndpointsHandler(Handler *http.ServeMux) *http.ServeMux {
+	Handler.HandleFunc("/api/auth/login", loginEndpoint)
+	Handler.HandleFunc("/api/auth/register", registerEndpoint)
+	Handler.HandleFunc("/api/auth/logout", logoutEndpoint)
+	Handler.HandleFunc("/api/auth/refresh", refreshEndpoint)
 
-			err = bcrypt.CompareHashAndPassword([]byte(user.Username), []byte(req.Password))
-			if err != nil {
-				http.Error(w, "Unauthorized", http.StatusUnauthorized)
-				return
-			}
+	return Handler
+}
 
-			cookie, err := tokenCookie(user.ID)
-			if err != nil {
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
-			}
+func loginEndpoint(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("loginEndpoint")
 
-			http.SetCookie(w, cookie)
+	var req loginRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
+	}
 
-		} else if strings.HasSuffix(r.URL.Path, "/register") {
+	user, err := db.New(db.Conn(r.Context())).GetUser(r.Context(), req.Username)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
 
-			var req registerRequest
-			err := json.NewDecoder(r.Body).Decode(&req)
-			if err != nil {
-				http.Error(w, "Bad request", http.StatusBadRequest)
-				return
-			}
+	err = bcrypt.CompareHashAndPassword([]byte(user.Passwordhash), []byte(req.Password))
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 
-			hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-			if err != nil {
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
-			}
+	cookie, err := tokenCookie(user.ID)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
 
-			user, err := db.New(db.Conn()).CreateUser(ctx, db.CreateUserParams{
-				Username:     req.Username,
-				Passwordhash: string(hash),
-			})
+	http.SetCookie(w, cookie)
+	w.WriteHeader(http.StatusOK)
 
-			if err != nil {
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
-			}
+	w.Write([]byte("{\"userid\": \"" + strconv.Itoa(int(user.ID)) + "\"}"))
 
-			cookie, err := tokenCookie(user.ID)
-			if err != nil {
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
-			}
-			http.SetCookie(w, cookie)
+}
+func registerEndpoint(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("registerEndpoint")
 
-		} else if strings.HasSuffix(r.URL.Path, "/logout") {
+	var req registerRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
+	}
 
-			// for reference you can logout with out being logged in 😂
+	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
 
-			http.SetCookie(w, &http.Cookie{
-				Name:   "token",
-				Value:  "",
-				MaxAge: -1,
-				Path:   "/",
-			})
-
-		} else if strings.HasSuffix(r.URL.Path, "/refresh") {
-
-			auth, userid := isAuth(r)
-			if !auth {
-				http.Error(w, "Unauthorized", http.StatusUnauthorized)
-				return
-			}
-
-			cookie, err := tokenCookie(userid)
-			if err != nil {
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
-			}
-
-			http.SetCookie(w, cookie)
-
-		} else {
-			http.Error(w, "Not found", http.StatusNotFound)
-		}
+	UserID, err := db.New(db.Conn(r.Context())).CreateUser(r.Context(), db.CreateUserParams{
+		Username:     req.Username,
+		Passwordhash: string(hash),
 	})
+
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	cookie, err := tokenCookie(UserID)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	http.SetCookie(w, cookie)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("{\"userid\": \"" +  strconv.Itoa(int(UserID)) + "\"}"))
+
+}
+func logoutEndpoint(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("logoutEndpoint")
+	
+	// for reference you can logout with out being logged in 😂
+
+	http.SetCookie(w, &http.Cookie{
+		Name:   "token",
+		Value:  "",
+		MaxAge: -1,
+		Path:   "/",
+	})
+
+}
+func refreshEndpoint(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("refreshEndpoint")
+	auth, userid := isAuth(r)
+	if !auth {
+		fmt.Println("not auth")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("{\"userid\": null, \"auth\": false}"))
+		return
+	}
+
+	cookie, err := tokenCookie(userid)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	http.SetCookie(w, cookie)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("{\"userid\": \"" + strconv.Itoa(int(userid)) + "\"}"))
+
 }
 
 func tokenCookie(userID int32) (*http.Cookie, error) {
@@ -172,10 +199,10 @@ func tokenCookie(userID int32) (*http.Cookie, error) {
 	}
 	return cookie, nil
 }
-
 func isAuth(r *http.Request) (isAuth bool, userid int32) {
 	cookie, err := r.Cookie("token")
 	if err != nil {
+		fmt.Println(err)
 		return false, 0
 	}
 
@@ -183,18 +210,23 @@ func isAuth(r *http.Request) (isAuth bool, userid int32) {
 		return secretKey, nil
 	})
 	if err != nil {
+		fmt.Println(err)
 		return false, 0
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok || !token.Valid {
+		fmt.Println("not Valid")
 		return false, 0
 	}
 
-	userid, ok = claims["ID"].(int32)
+	id, ok := claims["ID"]
 	if !ok {
+		fmt.Println("not ok")
+		fmt.Println(claims["ID"])
 		return false, 0
 	}
+	userid = int32(id.(float64))
 
 	return true, userid
 }
