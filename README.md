@@ -39,10 +39,11 @@ docker image rm dis_project-server
 Regexes used can be found in ``src/routes/register/+page.svelte``.
 
 # Sample Database 
-The sample database can be found in ``init-data.sql``. The sample database should be automatically inserted when running the application. 
-The sample database contains two users;
+The sample dataset can be found in ``init-data.sql``. The sample dataset should be automatically inserted when running the application. 
+The sample dataset contains two users;
 - User1: Username = "Test1" Password = "Test1234%"
 - User2: Username = "Test2" Password = "Test1234%"
+  
 With 5 events and 2 clubs. 
 
 
