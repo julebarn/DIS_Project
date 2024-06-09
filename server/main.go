@@ -3,8 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -15,8 +17,23 @@ import (
 func main() {
 	fmt.Println("Server started and listening on PORT 8080...")
 
+	// print all files in the build folder
+	files, err := ioutil.ReadDir("./build")
+	if err != nil {
+		panic(err)
+	}
+
+	for _, f := range files {
+		fmt.Println(f.Name())
+	}
+
 	handler := http.NewServeMux()
-	handler.Handle("/", http.FileServer(http.Dir("./build")))
+	handler.HandleFunc("/",func(w http.ResponseWriter, r *http.Request) { 
+
+		r.URL.Path, _ = strings.CutSuffix(r.URL.Path, ".html")
+
+		http.FileServer(http.Dir("./build")).ServeHTTP(w, r)
+	})
 
 	handler.HandleFunc("/api/event/details/{id}", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("hej")

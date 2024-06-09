@@ -51,7 +51,7 @@ WORKDIR /src
 COPY server ./server
 COPY go.mod .
 COPY go.sum .
-COPY --from=sqlc-build /src/server/db/ /server/db/
+COPY --from=sqlc-build /src/server/db/ ./server/db/
 
 # NOTE: If third-party deps are installed, then git has to be manually installed here.
 
@@ -67,9 +67,10 @@ RUN go build -o ./server ./server/main.go
 FROM alpine:latest
 EXPOSE 8080
 
-COPY --from=frontend-build /src/build /build
-COPY --from=server-builder /src/server /bin/server
+WORKDIR /app
 
-RUN chmod +x /bin/server
 
-CMD ["/bin/server"]
+COPY --from=frontend-build /src/build ./build
+COPY --from=server-builder /src/server ./server
+
+CMD ["./server/main"]
