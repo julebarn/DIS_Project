@@ -30,7 +30,9 @@ func main() {
 	handler := http.NewServeMux()
 	handler.HandleFunc("/",func(w http.ResponseWriter, r *http.Request) { 
 
-		r.URL.Path, _ = strings.CutSuffix(r.URL.Path, ".html")
+		if !strings.HasPrefix(r.URL.Path, "/_app") {
+			r.URL.Path = r.URL.Path + ".html"
+		}
 
 		http.FileServer(http.Dir("./build")).ServeHTTP(w, r)
 	})

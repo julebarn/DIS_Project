@@ -27,7 +27,7 @@ userID.subscribe(v => isLoggin = v != null)
 userID.subscribe(v => console.log("userID", v))
 
 export function refreshTokens() {
-    if (process.browser) {
+    if (window) {
         fetch("/api/auth/refresh", {
             credentials: "include",
         })
@@ -46,7 +46,7 @@ export function refreshTokens() {
 
 
 export function login(username: string, password: string) {
-    if (process.browser) {
+    if (window) {
         fetch("/api/auth/login", {
             method: "POST",
             headers: {
@@ -69,7 +69,7 @@ export function login(username: string, password: string) {
 
 export function logout() {
 
-    if (process.browser) {
+    if (window) {
         fetch("/api/auth/logout")
     }
 
@@ -77,7 +77,8 @@ export function logout() {
 }
 
 export function register(username: string, password: string) {
-    if (process.browser) {
+    if (window) {
+        
         fetch("/api/auth/register", {
             method: "POST",
             body: JSON.stringify({ "username": username, "password": password })
