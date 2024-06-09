@@ -28,9 +28,9 @@ func main() {
 	}
 
 	handler := http.NewServeMux()
-	handler.HandleFunc("/",func(w http.ResponseWriter, r *http.Request) { 
+	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
-		if !strings.HasPrefix(r.URL.Path, "/_app") {
+		if !strings.HasPrefix(r.URL.Path, "/_app") && !(r.URL.Path == "/") {
 			r.URL.Path = r.URL.Path + ".html"
 		}
 
@@ -175,7 +175,6 @@ func main() {
 
 		json.NewEncoder(w).Encode(res)
 	})
-
 
 	handler.HandleFunc("/api/user/list", func(w http.ResponseWriter, r *http.Request) {
 		user, err := db.New(db.Conn(r.Context())).GetAllUsers(r.Context())
@@ -325,8 +324,6 @@ func main() {
 				return
 			}
 
-
-			
 		})))
 
 	handler = auth.EndpointsHandler(handler)
